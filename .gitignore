@@ -1,0 +1,11 @@
+.idea
+
+# Backend ignored folders
+backend/__pycache__
+backend/env
+backend/.vscode
+backend/flaskr/__pycache__
+
+# Frontend ignored folders
+frontend/.vscode
+frontend/node_modules
