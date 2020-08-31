@@ -76,13 +76,13 @@ This README is missing documentation of your endpoints. Below is an example for 
 
 ## Endpoints
 
-- [GET /categories](#get-/categories)
-- [GET /questions](#get-/questions)
-- [DELETE /questions/*id*](#delete-/questions/*id*)
-- [POST /questions](#post-/questions)
-- [POST /search](#post-/seaech)
-- [GET categories/*category_id*/questions](#get-/categories/*category_id*/questions)
-- [POST /quizzes](#post-/quizzes)
+- [GET /categories](#get-categories)
+- [GET /questions](#get-questions)
+- [DELETE /questions/*id*](#delete-questionsid)
+- [POST /questions](#post-questions)
+- [POST /search](##post-search)
+- [GET categories/*category_id*/questions](#get-categoriescategory_idquestions)
+- [POST /quizzes](#post-quizzes)
 
 ### GET '/categories'
 
@@ -99,12 +99,12 @@ curl http://localhost:5000/categories
 
 ```json
 {
-    '1' : "Science",
-    '2' : "Art",
-    '3' : "Geography",
-    '4' : "History",
-    '5' : "Entertainment",
-    '6' : "Sports"
+    "1" : "Science",
+    "2" : "Art",
+    "3" : "Geography",
+    "4" : "History",
+    "5" : "Entertainment",
+    "6" : "Sports"
 }
 ```
 
@@ -363,7 +363,7 @@ curl http://localhost:5000/categories/1/questions?page=1
 }
 ```
 
-### PSOT '/quizzes'
+### POST '/quizzes'
 
 - Fetch a question within the choosen category and not one of the previous questions
 - Returns question object and success value
