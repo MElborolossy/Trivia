@@ -21,8 +21,7 @@ def get_catogires_list():
 
 
 def get_questions_list():
-    formatted_questions = [question.format()
-                           for question in Question.query.all()]
+    formatted_questions = [question.format() for question in Question.query.order_by(Question.id).all()]
     return formatted_questions
 
 
@@ -43,10 +42,8 @@ def create_app(test_config=None):
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers',
-                             'Content-Type, Authorization')
-        response.headers.add('Access-Control-Allow-Methods',
-                             'GET, POST, DELETE')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, POST, DELETE')
         return response
 
     '''
@@ -85,17 +82,19 @@ def create_app(test_config=None):
             end = start + QUESTIONS_PER_PAGE
             questions = get_questions_list()
             current_questions = questions[start:end]
+            
             if len(current_questions) == 0:
                 abort(404)
+            
             else:
                 return jsonify({
                     'success': True,
                     'questions': current_questions,
                     'total_questions': len(questions),
-                    'currentCategory': None,
+                    'current_category': None,
                     'categories': get_catogires_list()
                 })
-        except:
+        except RuntimeError:
             abort(422)
     '''
   @TODO:
@@ -117,7 +116,7 @@ def create_app(test_config=None):
                     'success': True,
                     'deleted_question_id': question_id
                 })
-        except:
+        except RuntimeError:
             abort(422)
     '''
   @TODO:
@@ -141,9 +140,9 @@ def create_app(test_config=None):
             new_question.insert()
             return jsonify({
                 'success': True,
-                'message': f'New Question with {new_question.id} added!!'
+                'message': f'New Question with id {new_question.id} added!!'
             })
-        except:
+        except BaseException:
             abort(422)
     '''
   @TODO:
@@ -172,7 +171,7 @@ def create_app(test_config=None):
                 'questions': format_matched_questions,
                 'total_questions': len(format_matched_questions)
             })
-        except:
+        except RuntimeError:
             abort(422)
 
     '''
@@ -190,8 +189,11 @@ def create_app(test_config=None):
             start = (page - 1) * QUESTIONS_PER_PAGE
             end = start + QUESTIONS_PER_PAGE
             current_category = Category.query.get(category_id)
-            selected_questions = Question.query.filter(
-                Question.category == category_id).all()
+            
+            if current_category is None:
+                abort(404)
+            
+            selected_questions = Question.query.filter(Question.category == category_id).all()
             current_questions = selected_questions[start:end]
 
             if len(current_questions) == 0:
@@ -205,7 +207,7 @@ def create_app(test_config=None):
                 'current_category': current_category.type,
                 'total_questions': len(selected_questions)
             })
-        except:
+        except RuntimeError:
             abort(422)
     '''
   @TODO:
@@ -223,12 +225,15 @@ def create_app(test_config=None):
         try:
             category_id = request.get_json()['quiz_category']['id']
             previous_questions = request.get_json()['previous_questions']
+            
+            # Check if the ALL is selected or other categories
             if category_id == 0:
                 questions = Question.query.all()
             else:
                 questions = Question.query.filter_by(
                     category=category_id).all()
-
+            
+            # Check if all the questions already asked
             if len(questions) == len(previous_questions):
                 quiz_question = {
                     'success': True,
@@ -246,7 +251,7 @@ def create_app(test_config=None):
                     'question': questions[random_index].format()
                 }
             return jsonify(quiz_question)
-        except:
+        except BaseException:
             abort(422)
 
     '''

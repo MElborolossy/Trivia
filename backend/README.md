@@ -72,24 +72,354 @@ REVIEW_COMMENT
 
 ```Markdown
 This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code.
+```
 
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
+## Endpoints
 
-GET '/categories'
+- [GET /categories](#get-/categories)
+- [GET /questions](#get-/questions)
+- [DELETE /questions/*id*](#delete-/questions/*id*)
+- [POST /questions](#post-/questions)
+- [POST /search](#post-/seaech)
+- [GET categories/*category_id*/questions](#get-/categories/*category_id*/questions)
+- [POST /quizzes](#post-/quizzes)
+
+### GET '/categories'
+
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
 - Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs.
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+- Request Sample
 
+```bash
+curl http://localhost:5000/categories
+```
+
+- Response Sample
+
+```json
+{
+    '1' : "Science",
+    '2' : "Art",
+    '3' : "Geography",
+    '4' : "History",
+    '5' : "Entertainment",
+    '6' : "Sports"
+}
+```
+
+### GET '/questions'
+
+- Returns a list of question objects, success value, and total number of questions, list of categories and the current category
+- Results are paginated in groups of 10. Include a request argument to choose page number, starting from 1.
+- Request Arguments: page
+- Request Sample
+
+```bash
+curl http://localhost:5000/questions
+curl http://localhost:5000/questions?page=2
+```
+
+- Response Sample
+
+```json
+{
+    "categories": {
+        "1": "Science",
+        "2": "Art",
+        "3": "Geography",
+        "4": "History",
+        "5": "Entertainment",
+        "6": "Sports"
+    },
+    "current_category": null,
+    "questions": [
+        {
+            "answer": "Apollo 13",
+            "category": 5,
+            "difficulty": 4,
+            "id": 2,
+            "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+        },
+        {
+            "answer": "Muhammad Ali",
+            "category": 4,
+            "difficulty": 1,
+            "id": 9,
+            "question": "What boxer's original name is Cassius Clay?"
+        },
+        {
+            "answer": "Brazil",
+            "category": 6,
+            "difficulty": 3,
+            "id": 10,
+            "question": "Which is the only team to play in every soccer World Cup tournament?"
+        },
+        {
+            "answer": "Uruguay",
+            "category": 6,
+            "difficulty": 4,
+            "id": 11,
+            "question": "Which country won the first ever soccer World Cup in 1930?"
+        },
+        {
+            "answer": "George Washington Carver",
+            "category": 4,
+            "difficulty": 2,
+            "id": 12,
+            "question": "Who invented Peanut Butter?"
+        },
+        {
+            "answer": "Lake Victoria",
+            "category": 3,
+            "difficulty": 2,
+            "id": 13,
+            "question": "What is the largest lake in Africa?"
+        },
+        {
+            "answer": "The Palace of Versailles",
+            "category": 3,
+            "difficulty": 3,
+            "id": 14,
+            "question": "In which royal palace would you find the Hall of Mirrors?"
+        },
+        {
+            "answer": "Agra",
+            "category": 3,
+            "difficulty": 2,
+            "id": 15,
+            "question": "The Taj Mahal is located in which Indian city?"
+        },
+        {
+            "answer": "Escher",
+            "category": 2,
+            "difficulty": 1,
+            "id": 16,
+            "question": "Which Dutch graphic artist–initials M C was a creator of optical illusions?"
+        },
+        {
+            "answer": "Mona Lisa",
+            "category": 2,
+            "difficulty": 3,
+            "id": 17,
+            "question": "La Giaconda is better known as what?"
+        }
+    ],
+    "success": true,
+    "total_questions": 19
+}
+```
+
+### DELETE '/questions/*id*'
+
+- Delete question using id
+- Request Arguments: None
+- Return: An object of success status and a message include deleted question id.
+- Request Sample
+
+```bash
+curl -X DELETE http://localhost:5000/questions/2
+```
+
+- Response Sample
+
+```json
+{
+    "deleted_question_id": 2,
+    "success": true
+}
+```
+
+### POST '/questions'
+
+- Creates a new question using the submitted question, answer ,difficulty and category.
+- Returns : success status and question id included in a message.
+- Request Arguments: None
+- Request Sample
+
+```bash
+curl --request POST 'localhost:5000/questions' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "question":"What is the most popular language?",
+    "answer":"English",
+    "difficulty":1,
+    "category":1
+    }'
+```
+
+- Response Sample
+
+```json
+{
+    "message": "New Question with id 36 added!!",
+    "success": true
+}
+```
+
+### POST '/search'
+
+- Search with a word to get the matched questions that include this word
+- Request Arguments: None
+- Return: success status, all matched questions and the total length of matched questions
+- Request Sample
+
+```bash
+url --request POST 'localhost:5000/search' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "searchTerm":"who"
+}'
+```
+
+- Response Sample
+
+```json
+{
+    "questions": [
+        {
+            "answer": "George Washington Carver",
+            "category": 4,
+            "difficulty": 2,
+            "id": 12,
+            "question": "Who invented Peanut Butter?"
+        },
+        {
+            "answer": "Alexander Fleming",
+            "category": 1,
+            "difficulty": 3,
+            "id": 21,
+            "question": "Who discovered penicillin?"
+        },
+        {
+            "answer": "CR7",
+            "category": 6,
+            "difficulty": 1,
+            "id": 33,
+            "question": "Who is the best player around the world?"
+        }
+    ],
+    "success": true,
+    "total_questions": 3
+}
+```
+
+### GET '/categories/*category_id*/questions'
+
+- Returns a list of questions by category, success value, and total number of questions in this category and the current category
+- Results are paginated in groups of 10. Include a request argument to choose page number, starting from 1.
+- Request Arguments: page
+- Request Sample
+
+```bash
+curl http://localhost:5000/categories/1/questions
+curl http://localhost:5000/categories/1/questions?page=1
+```
+
+- Response Sample
+
+```json
+{
+    "current_category": "Science",
+    "questions": [
+        {
+            "answer": "The Liver",
+            "category": 1,
+            "difficulty": 4,
+            "id": 20,
+            "question": "What is the heaviest organ in the human body?"
+        },
+        {
+            "answer": "Alexander Fleming",
+            "category": 1,
+            "difficulty": 3,
+            "id": 21,
+            "question": "Who discovered penicillin?"
+        },
+        {
+            "answer": "Blood",
+            "category": 1,
+            "difficulty": 4,
+            "id": 22,
+            "question": "Hematology is a branch of medicine involving the study of what?"
+        },
+        {
+            "answer": "White Whale",
+            "category": 1,
+            "difficulty": 3,
+            "id": 35,
+            "question": "What is the biggest animal in the water?"
+        },
+        {
+            "answer": "English",
+            "category": 1,
+            "difficulty": 1,
+            "id": 37,
+            "question": "What is the most popular language?"
+        }
+    ],
+    "success": true,
+    "total_questions": 5
+}
+```
+
+### PSOT '/quizzes'
+
+- Fetch a question within the choosen category and not one of the previous questions
+- Returns question object and success value
+- Request Arguments: None
+- Request Sample
+
+```bash
+curl  --request POST 'localhost:5000/quizzes' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "previous_questions":[],
+    "quiz_category": {
+        "type": "Science",
+        "id": 1
+    }
+}'
+```
+
+- Response Sample
+
+```json
+{
+    "question": {
+        "answer": "The Liver",
+        "category": 1,
+        "difficulty": 4,
+        "id": 20,
+        "question": "What is the heaviest organ in the human body?"
+    },
+    "success": true
+}
+```
+
+## Error Handling
+
+- [404: Resource not Found](#error-404)
+- [422: Unproccessable Entity](#error-422)
+
+### Error 404
+
+```json
+{
+    "success": false,
+    "error": 404,
+    "message": "Resource not Found"
+}
+```
+
+### Error 422
+
+```json
+{
+    "success": false,
+    "error": 422,
+    "message": "Unprocessable Entity"
+}
 ```
 
 ## Testing
